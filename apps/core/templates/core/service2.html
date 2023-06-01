@@ -1,0 +1,94 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Interpretación de Datos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        
+        .chat-log {
+            max-height: 300px;
+            overflow-y: scroll;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            background-color: #fff;
+        }
+        
+        .user-message,
+        .bot-message {
+            margin-bottom: 10px;
+        }
+        
+        .user-message .message-content {
+            background-color: #e1ffc7;
+        }
+        
+        .bot-message .message-content {
+            background-color: #f1f0f0;
+        }
+        
+        .message-content {
+            padding: 5px 10px;
+            border-radius: 3px;
+            display: inline-block;
+        }
+        
+        .user-message .message-content {
+            text-align: right;
+        }
+        
+        .input-group {
+            margin-top: 10px;
+        }
+        
+        .input-group input[type="text"] {
+            width: 80%;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        
+        .input-group button {
+            width: 18%;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Interpretación de Datos</h1>
+        <div class="chat-log" id="chat-log">
+            <div class="bot-message">
+                <div class="message-content">¡Hola! Soy tu asistente para interpretar datos. ¡Pregúntame lo que necesites!</div>
+            </div>
+        </div>
+        <div class="input-group">
+            <input type="text" id="user-input" placeholder="Escribe tu mensaje...">
+            <button type="button" onclick="sendMessage()">Enviar</button>
+        </div>
+    </div>
+
+    <script src="{% static 'core/js/chat.js' %}"></script>
+</body>
+</html>

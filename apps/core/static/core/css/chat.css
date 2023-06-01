@@ -1,0 +1,12 @@
+.user-message .message-content {
+    background-color: #e1ffc7;
+    padding-left: 10px;
+    margin-bottom: 20px;
+}
+
+.chat-log {
+    max-height: 700px;
+    overflow-y: scroll;
+    padding: 10px;
+    background-color: #fff;
+}
