@@ -1,5 +1,4 @@
 import requests
-from decouple import config
 
 def validate_api_key(api_key):
     url = "https://api.openai.com/v1/models"
@@ -10,3 +9,4 @@ def validate_api_key(api_key):
         return {"api_key": 'valid_api_key'}
     else:
         return {"api_key": 'invalid_api_key'}
+    
