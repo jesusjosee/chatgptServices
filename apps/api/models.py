@@ -5,3 +5,5 @@ from .helpers.custom_upload import csv_upload_path
 class UploadFile(models.Model):
     csv_file = models.FileField(upload_to=csv_upload_path, max_length = 100)
     
+    def __str__(self):
+        return self.id
