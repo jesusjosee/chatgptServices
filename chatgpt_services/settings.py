@@ -41,7 +41,10 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
-    'rest_framework'
+    'rest_framework',
+    'encrypted_model_fields',
+    'crispy_forms',
+    'crispy_bootstrap5',
 ]
 
 LOCAL_APPS = [
@@ -82,6 +85,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'chatgpt_services.wsgi.application'
 
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -148,3 +154,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 ##########################################
 
 AUTH_USER_MODEL = 'users.CustomUser'
+
+FIELD_ENCRYPTION_KEY = config('FIELD_ENCRYPTION_KEY')
+
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"

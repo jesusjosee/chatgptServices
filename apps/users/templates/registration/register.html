@@ -1,0 +1,35 @@
+{% extends 'base/base.html' %}
+
+
+{% block title %}
+    Registrate
+{% endblock title %}
+    
+    
+{% block body %}
+    
+        {% load crispy_forms_tags %}
+        <div class="row">
+            <div class="col-sm-12 col-md-6 offset-md-3">
+              <br><br>
+              <div class="card">
+                <div class="card-body">
+                  <h2 class="text-center">Registrate</h2>
+                  <hr>
+                  <form action="" method="POST">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="d-flex justify-content-between">
+                      <div>
+                        <a href="{% url 'home' %}">Ir al home</a> | <a href="{% url 'login' %}">Iniciar Sesión</a>
+                      </div>
+                      <input type="submit" value="Regístrate" class="btn btn-success">
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+        </div>
+                 
+{% endblock body %}
+        
