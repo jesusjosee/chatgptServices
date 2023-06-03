@@ -18,3 +18,21 @@ def extract_csv_data(file):
         processed_data.append([value for value in row_values])
 
     return processed_data
+
+
+def analize_csv(csv_file_path):
+    # Leer el archivo CSV utilizando pandas
+    df = pd.read_csv(csv_file_path)
+
+    # Generar una descripción inicial de los datos
+    descripcion_inicial = f"El archivo CSV contiene {len(df)} filas y {len(df.columns)} columnas.\n\n"
+
+    return {
+        "initial_description": descripcion_inicial,
+        "dataframe": df.to_dict()
+    }
+
+
+def clean_data_to_array(text):
+    array_strings = [line for line in text.splitlines() if line.strip()]
+    return array_strings

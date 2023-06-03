@@ -8,6 +8,11 @@ from .helpers.convert_data import  extract_csv_data
 
 from .models import UploadFile
 from .helpers.exceptions import MalformedDataException
+from .helpers.convert_data import analize_csv, clean_data_to_array
+from .helpers.prompts import send_messages_to_chatgpt 
+
+from decouple import config
+from openai import error as openai_error
 # Create your views here.
 
 class APiKeyAutenticationView(APIView):
@@ -44,3 +49,26 @@ class UploadCSVAPIView(APIView):
         
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class AnalizeCSVAPIView(APIView):
+    def post(self, request):
+        csv_file_path = UploadFile.objects.last()
+        api_key= config("OPENAI_API_KEY2")
+        
+        try:
+            results = analize_csv(csv_file_path.csv_file)
+
+            res = send_messages_to_chatgpt(results['dataframe'], api_key)
+            
+            data = {
+                "initial_description" : results["initial_description"],
+                "chatgpt_response": clean_data_to_array(res)
+            }
+
+            return Response(data, status=status.HTTP_200_OK)
+        except openai_error.OpenAIError as e:
+        # except openai_error.InvalidRequestError as e:
+            return Response({"error": 'Ocurrió un error al comunicarse con la API de OpenAI:'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+

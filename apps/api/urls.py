@@ -1,8 +1,9 @@
 from django.urls import path
-from .views import APiKeyAutenticationView, UploadCSVAPIView
+from .views import APiKeyAutenticationView, UploadCSVAPIView, AnalizeCSVAPIView
 
 
 urlpatterns = [
     path('authentication', APiKeyAutenticationView.as_view(), name='authenticationKey'),
     path('uploadcsv', UploadCSVAPIView.as_view(), name='uploadCSV'),
+    path('analyze-csv', AnalizeCSVAPIView.as_view(), name='analyze_csv'),
 ]
