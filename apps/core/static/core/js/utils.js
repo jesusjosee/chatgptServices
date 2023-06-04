@@ -14,27 +14,37 @@ function getCookie(name) {
 }
   
 async function fetchData(url, data) {
-     // Asegúrate de poner el "/" si tu función lleva o no
-    const baseURL = 'api';
-    const fullURL = `${baseURL}/${url}`;
+  const baseURL = 'api';
+  const fullURL = `${baseURL}/${url}`;
 
-    try {
-        const response = await fetch(fullURL, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCookie('csrftoken')
-        },
-        body: JSON.stringify(data)
-        });
+  try {
+    let headers = {};
 
-        const responseData = await response.json();
-
-        return responseData;
-    } catch (error) {
-        console.log(error);
+    if (typeof data === 'object' && !FormData.prototype.isPrototypeOf(data)) {
+      // Si los datos son de tipo objeto y no son una instancia de FormData, conviértelos a JSON
+      data = JSON.stringify(data);
+      headers['Content-Type'] = 'application/json';
     }
+
+    const csrfToken = getCookie('csrftoken');
+    headers['X-CSRFToken'] = csrfToken;
+
+    const response = await fetch(fullURL, {
+      method: 'POST',
+      body: data,
+      headers: headers,
+    });
+
+    const responseData = await response.json();
+
+    return responseData;
+  } catch (error) {
+    console.log(error);
+  }
 }
+
+  
+  
 
 
 function showAlert(alertId, typeClass, message, linkHref = '', linkText = '') {
@@ -104,4 +114,33 @@ function removeAlert(alertId) {
       spinner.style.display = 'none';
     }
   }
-  
+  function showMessageInput(inputType) {
+    var messageInput = document.getElementById('user-text');
+    var fileInput = document.getElementById('file');
+    var sendMessageButton = document.getElementById('send-message');
+    var sendFileButton = document.getElementById('send-file');
+    
+    if (inputType === 'text') {
+        messageInput.style.display = 'block';
+        fileInput.style.display = 'none';
+        sendMessageButton.classList.add('active');
+        sendFileButton.classList.remove('active');
+    } else if (inputType === 'file') {
+        messageInput.style.display = 'none';
+        fileInput.style.display = 'block';
+        sendMessageButton.classList.remove('active');
+        sendFileButton.classList.add('active');
+    }
+}
+
+function removeDisabled() {
+    var userInput = document.getElementById("user-text");
+    var fileInput = document.getElementById("file");
+    var buttonSend = document.getElementById("send");
+    
+    if (userInput.value === '' && fileInput.files.length === 0) {
+        buttonSend.setAttribute("disabled", true);
+    } else {
+        buttonSend.removeAttribute('disabled');
+    }
+}

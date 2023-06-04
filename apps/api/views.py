@@ -38,6 +38,10 @@ class UploadCSVAPIView(APIView):
 
     def post(self, request, *args, **kwargs):
         file = request.FILES.get('file')
+        user_text= request.data.get('user-text')
+        if user_text:
+            #Todo pasarle el texto a chtgpt
+            pass
         
         if not file:
             return Response({'error': 'No file provided'}, status=status.HTTP_400_BAD_REQUEST)
