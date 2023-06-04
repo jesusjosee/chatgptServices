@@ -1,5 +1,4 @@
 from django.db import models
-from encrypted_model_fields.fields import EncryptedCharField
 from apps.users.models import CustomUser
 
 from encrypted_model_fields.fields import EncryptedCharField
@@ -7,19 +6,20 @@ from .helpers.custom_upload import csv_upload_path
 # Create your models here.
 
 class ApiKey(models.Model):
-    key = EncryptedCharField(max_length=255, unique=True)
+    key = models.CharField(max_length=255, unique=True)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='api_keys')
     name = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
-        return f'{self.name}-{self.key}'
+        return f'Apikey de {self.name}'
 
     def save(self, *args, **kwargs):
         if not self.name:
-            self.name = f"{self.key[-6:]} {self.user.username}"
-
-        super().save(*args, **kwargs)
-
+            username = self.user.email.split('@')[0]
+            self.name = f"{username}-{self.key[-6:]}"
+        
+        if not ApiKey.objects.filter(key=self.key, user=self.user).exists():
+            super().save(*args, **kwargs)
 
 class UploadFile(models.Model):
     csv_file = models.FileField(upload_to=csv_upload_path, max_length = 100)

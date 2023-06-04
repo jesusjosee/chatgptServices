@@ -6,15 +6,15 @@ function sendMessage() {
     document.getElementById("user-input").value = "";
 }
 
-function sendMessageOnEnter() {
-    var input = document.getElementById("user-input");
+// function sendMessageOnEnter() {
+//     var input = document.getElementById("user-input");
 
-    input.addEventListener("keydown", function(event){
-        if (event.key === "Enter"){
-            sendMessage();
-        }
-    })
-}
+//     input.addEventListener("keydown", function(event){
+//         if (event.key === "Enter"){
+//             sendMessage();
+//         }
+//     })
+// }
 
 function addUserMessage(message) {
     var chatLog = document.getElementById("chat-log");
@@ -49,17 +49,3 @@ function sendRequest(message) {
         addBotMessage(response);
     }, 1000);
 }
-
-function removeDisabled(){
-    var userInput = document.getElementById("user-input");
-    var buttonSend = document.getElementById("send");
-    userInput.addEventListener('input', function(e) {
-        if ( userInput.value == '') return buttonSend.setAttribute("disabled", true);
-        buttonSend.removeAttribute('disabled');
-
-
-    })
-
-}
-
-// sendMessageOnEnter();

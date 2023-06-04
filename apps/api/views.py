@@ -1,29 +1,35 @@
+from django.contrib.auth.models import AnonymousUser
+from django.shortcuts import get_object_or_404
 from rest_framework.parsers import MultiPartParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from .helpers.autentication import validate_api_key
-from .helpers.convert_data import  extract_csv_data
-
-from .models import UploadFile
-from .helpers.exceptions import MalformedDataException
-from .helpers.convert_data import analize_csv, clean_data_to_array
-from .helpers.prompts import send_messages_to_chatgpt 
-
 from decouple import config
 from openai import error as openai_error
+from rest_framework.permissions import AllowAny 
+
+from .helpers.autentication import validate_api_key
+from .models import UploadFile, ApiKey
+from apps.users.models import CustomUser
+from .helpers.exceptions import MalformedDataException
+from .helpers.convert_data import analize_csv, clean_data_to_array, extract_csv_data
+from .helpers.prompts import send_messages_to_chatgpt 
+
 # Create your views here.
-
 class APiKeyAutenticationView(APIView):
-
+    
     def post(self, request, *args, **kwargs):
-
+        
         api_key = request.data.get("api_key")
         response = validate_api_key(api_key)
         
         if response['api_key'] == 'invalid_api_key':
             return Response({'response': response['api_key']}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        if not isinstance(request.user, AnonymousUser):
+            user = get_object_or_404(CustomUser, email=request.user.email)
+            ApiKey.objects.create(key=api_key, user=user)
         
         return Response({'response': response['api_key']}, status=status.HTTP_200_OK)
       
@@ -54,12 +60,13 @@ class UploadCSVAPIView(APIView):
 class AnalizeCSVAPIView(APIView):
     def post(self, request):
         csv_file_path = UploadFile.objects.last()
-        api_key= config("OPENAI_API_KEY2")
+        # api_key= config("OPENAI_API_KEY2")
+        token = self.get_token_from_header(request)
         
         try:
             results = analize_csv(csv_file_path.csv_file)
 
-            res = send_messages_to_chatgpt(results['dataframe'], api_key)
+            res = send_messages_to_chatgpt(results['dataframe'], token)
             
             data = {
                 "initial_description" : results["initial_description"],
@@ -68,7 +75,17 @@ class AnalizeCSVAPIView(APIView):
 
             return Response(data, status=status.HTTP_200_OK)
         except openai_error.OpenAIError as e:
-        # except openai_error.InvalidRequestError as e:
             return Response({"error": 'Ocurrió un error al comunicarse con la API de OpenAI:'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
+    def get_token_from_header(self, request):
+        authorization_header = request.META.get('HTTP_AUTHORIZATION')
+        
+        if authorization_header:
+            try:
+                auth_type, token = authorization_header.split(' ')
+                if auth_type.lower() == 'bearer':
+                    return token
+            except ValueError:
+                pass
+        
+        return None

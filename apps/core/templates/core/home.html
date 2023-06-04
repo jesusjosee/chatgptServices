@@ -38,6 +38,10 @@
         opacity: 1;
       }
     }
+
+      body {
+      font-family: 'Roboto', sans-serif;
+    }
   </style>
   
 {% endblock css %}
@@ -45,16 +49,91 @@
 
 
 {% block content %}
-    <div class="animated">
-        <div class="animated-logo"></div>
-    </div>
-    <div class="container">
-            
-        <h2 class="card-title my-3">Bienvenidos a la pagina de Inicio</h2>
-        
+<div class="animated">
+  <div class="animated-logo"></div>
+</div>
 
+<div class="container">
+  
+  {% if user.is_authenticated %}
+    
+    {% if 'apiKey' %}
+    <div class="row justify-content-center mt-3">
+      <div class="text-center">
+        <h1>Genial, ya tienes una API key</h1>
+        <a href="{% url 'service' %}"><h3>Interactuar con la app</h3></a>
+      </div>
     </div>
+    
+    {% else %}
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div class="card shadow mt-5">
+            <div class="card-body">
+              <h2 class="card-title text-center">Por favor ingresa tu API Key de OpenAI</h2>
+              <form class="d-flex" id="apiKeyForm">
+                {% csrf_token %}
+                <div class="input-group mb-3">
+                  <input type="text" class="form-control" id="apiKey" placeholder="Ingresa tu API Key">
+                  <button id="submitButton" type="submit" class="btn btn-primary" onclick="removeAlert('alert')">
+                    Ingresar
+                  </button>
+                </div>
+              </form>
+              <div id="spinner" class="spinner-border" role="status" style="display: none;">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              
+              <div id="alert" class="alert" role="alert"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    {% endif %}
+  
+  {% else %}
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card shadow mt-5">
+          <div class="card-body">
+            <h2 class="card-title text-center">Bienvenido</h2>
+            <p class="card-text text-center">
+              Para poder interactuar con el sistema, es necesario que te registres
+              <a href="{% url 'register' %}" class="text-decoration-none">aquí</a>.
+            </p>
+            <p class="card-text text-center">
+              Y luego ingreses tu token único que te proporciona OpenAI cuando te registras.
+            </p>
+          </div>
+          <div class="card-footer">
+            <p class="card-text text-center">
+              Si ya tienes una cuenta, puedes ingresar al sistema
+              <a href="{% url 'login' %}" class="text-decoration-none">aquí</a>.
+            </p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  {% endif %}
+    
+
+
+</div>
+
     
     
 {% endblock content %}
     
+
+
+{% block js %}
+
+  <script src="{% static 'core/js/utils.js' %}"></script>
+  <script src="{% static 'core/js/auth.js' %}"></script>
+
+  
+{% endblock js %}
+  

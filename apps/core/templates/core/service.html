@@ -1,56 +1,90 @@
 {% extends 'base/base_app.html' %}
 {% load static %}
 
-        
 {% block title %}
     Interpretación de Datos
-    
 {% endblock title %}
             
-    
 {% block css %}
-    
     <link rel="stylesheet" href="{% static 'core/css/chat.css' %}">
 {% endblock css %}
         
-   
-    
-
-    
 {% block content %}
-    <div class="container mt-3">
-        <div class="col-sm-12 col-md-6 offset-3">
-            <div class="card">
-                <div class="card-header d-flex justify-content-center">
-                    <h1>ChatGpt</h1>
-                </div>
-                <div class="card-body">
+
+
+<div class="container mt-3">
+    <div class="col-sm-12 col-md-6 offset-3">
+        <div class="card">
+            <div class="card-header d-flex justify-content-center">
+                <h1>ChatGpt</h1>
+            </div>
+            <div class="card-body">
                 <div class="chat-log" id="chat-log">
-                    <div class="bot-message alert alert-secondary" >
-                        <div class="message-content ">
+                    <div class="bot-message alert alert-secondary">
+                        <div class="message-content">
                             ¡Hola! Soy tu asistente para interpretar datos. ¡Pregúntame lo que necesites!
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="card-footer d-flex flex-column">
+                <div class="input-box">
+                    <div class="d-flex">
+                        <button id="send-file" class="flex-fill btn-box active" type="button" onclick="showMessageInput('file')">Subir Archivo</button>
+                        <button id="send-message" class="flex-fill btn-box" type="button" onclick="showMessageInput('text')" data-selected="true">Escribir Mensaje</button>
+                    </div>
                 </div>
-                <div class="card-footer d-flex">
-                    <input oninput="removeDisabled()" class="input-group form-control" type="text" id="user-input" placeholder="Escribe tu mensaje...">
-                    <button id="send" disabled class="btn btn-success ms-2" type="button" onclick="sendMessage()">
-                        Enviar
-                    </button>
+                
+                <div class="d-flex">
+                    <input oninput="removeDisabled()" class="form-control flex-grow-1 mt-2" type="text" id="user-input" placeholder="Escribe tu mensaje..." style="display: none;">
+                    <input onchange="removeDisabled()" type="file" class="form-control mt-2 ms-2" id="file-input">
                 </div>
+                
+                <button id="send" disabled class="btn btn-success mt-2" type="button" onclick="sendMessage()">Enviar</button>
             </div>
         </div>
-
     </div>
-    
-{% endblock content %}
+</div>
+
+<script>
+    function showMessageInput(inputType) {
+        var messageInput = document.getElementById('user-input');
+        var fileInput = document.getElementById('file-input');
+        var sendMessageButton = document.getElementById('send-message');
+        var sendFileButton = document.getElementById('send-file');
         
+        if (inputType === 'text') {
+            messageInput.style.display = 'block';
+            fileInput.style.display = 'none';
+            sendMessageButton.classList.add('active');
+            sendFileButton.classList.remove('active');
+        } else if (inputType === 'file') {
+            messageInput.style.display = 'none';
+            fileInput.style.display = 'block';
+            sendMessageButton.classList.remove('active');
+            sendFileButton.classList.add('active');
+        }
+    }
+
+    function removeDisabled() {
+        var userInput = document.getElementById("user-input");
+        var fileInput = document.getElementById("file-input");
+        var buttonSend = document.getElementById("send");
+        
+        if (userInput.value === '' && fileInput.files.length === 0) {
+            buttonSend.setAttribute("disabled", true);
+        } else {
+            buttonSend.removeAttribute('disabled');
+        }
+    }
+
+    function sendMessage() {
+        // Implementa la lógica para enviar el mensaje o el archivo
+    }
+</script>
+
+{% endblock content %}
 
 {% block js %}
     <script src="{% static 'core/js/chat.js' %}"></script>
-    
 {% endblock js %}
-    
-
-

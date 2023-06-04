@@ -41,6 +41,7 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
+    'corsheaders',
     'rest_framework',
     'encrypted_model_fields',
     'crispy_forms',
@@ -58,6 +59,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -159,3 +161,14 @@ FIELD_ENCRYPTION_KEY = config('FIELD_ENCRYPTION_KEY')
 
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
+
+###########################################
+    ### Rest Framework
+##########################################
+CORS_ALLOW_ALL_ORIGINS = True
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ],
+}

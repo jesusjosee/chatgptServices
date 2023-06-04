@@ -10,3 +10,19 @@
     padding: 10px;
     background-color: #fff;
 }
+
+.btn-box {
+    padding: 10px;
+    border: none;
+    background-color: #ccc;
+    color: white;
+    outline: none;
+}
+
+.btn-box.active {
+    background-color: blue;
+}
+
+.input-box {
+    background-color: transparent;
+}
