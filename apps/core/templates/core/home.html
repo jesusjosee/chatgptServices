@@ -8,41 +8,7 @@
 
 
 {% block css %}
-
-  
-  <style>
-    .animated {
-      height: 20px;
-      background-color: blue;
-      background: radial-gradient(circle, lemonchiffon, black 25%, skyblue);
-      position: relative;
-    }
-  
-    .animated:after {
-      content: '';
-      position: absolute;
-      top: 0;
-      right: 0;
-      left: 0;
-      bottom: 0;
-      background: radial-gradient(circle, transparent, black 25%, transparent);
-      animation: color 1.5s infinite ease-out alternate;
-      opacity: 0;
-    }
-  
-    @keyframes color {
-      0% {
-        background: radial-gradient(circle, transparent, black 25%, transparent);
-      }
-      100% {
-        opacity: 1;
-      }
-    }
-
-      body {
-      font-family: 'Roboto', sans-serif;
-    }
-  </style>
+  <link rel="stylesheet" href="{% static 'core/css/animatedLogo.css' %}">
   
 {% endblock css %}
     
@@ -55,9 +21,9 @@
 
 <div class="container">
   
+  
   {% if user.is_authenticated %}
-    
-    {% if 'apiKey' %}
+    {% if  apikey is not None %}
     <div class="row justify-content-center mt-3">
       <div class="text-center">
         <h1>Genial, ya tienes una API key</h1>

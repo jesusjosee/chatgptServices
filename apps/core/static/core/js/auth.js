@@ -5,6 +5,7 @@
     var apiKey = apiKeyInput.value;
   
     var data = { api_key: apiKey };
+    console.log(data)
   
     try {
       showSpinner('spinner')
@@ -29,4 +30,33 @@
   });
   
   
+  function showMessageInput(inputType) {
+    var messageInput = document.getElementById('user-input');
+    var fileInput = document.getElementById('file-input');
+    var sendMessageButton = document.getElementById('send-message');
+    var sendFileButton = document.getElementById('send-file');
+    
+    if (inputType === 'text') {
+        messageInput.style.display = 'block';
+        fileInput.style.display = 'none';
+        sendMessageButton.classList.add('active');
+        sendFileButton.classList.remove('active');
+    } else if (inputType === 'file') {
+        messageInput.style.display = 'none';
+        fileInput.style.display = 'block';
+        sendMessageButton.classList.remove('active');
+        sendFileButton.classList.add('active');
+    }
+}
 
+function removeDisabled() {
+    var userInput = document.getElementById("user-input");
+    var fileInput = document.getElementById("file-input");
+    var buttonSend = document.getElementById("send");
+    
+    if (userInput.value === '' && fileInput.files.length === 0) {
+        buttonSend.setAttribute("disabled", true);
+    } else {
+        buttonSend.removeAttribute('disabled');
+    }
+}
