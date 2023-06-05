@@ -46,6 +46,7 @@ THIRD_PARTY_APPS = [
     'encrypted_model_fields',
     'crispy_forms',
     'crispy_bootstrap5',
+    'drf_spectacular',
 ]
 
 LOCAL_APPS = [
@@ -167,8 +168,19 @@ LOGOUT_REDIRECT_URL = "/"
 ##########################################
 CORS_ALLOW_ALL_ORIGINS = True
 
+
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
     ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+
+}
+
+### Documentation
+SPECTACULAR_SETTINGS = {
+"TITLE": "Chat GPT Extra Services",
+"DESCRIPTION": "A service to interact with files in openai api ",
+"VERSION": "1.0.0",
+# OTHER SETTINGS
 }
