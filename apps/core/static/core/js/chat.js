@@ -12,35 +12,45 @@ async function sendMessage(event) {
 
     if (userInput !== '') {
         addUserMessage(userInput);
-        sendRequest(userInput);
+        // sendRequest(userInput);
         document.getElementById("user-text").value = "";
+
+        const responseToken = await fetchData('token', data);
+        data = {
+            'user-text': userInput
+        }
+        const textResponse = await fetchData('analyze-csv', data,responseToken.key);
+        addBotMessage(textResponse.chatgpt_response);
+        console.log("textResponse:", textResponse)
+
       }
     
       if (fileInput) {
         addUserMessage("Archivo: " + fileInput.name + " enviado");
         sendFile(fileInput);
         document.getElementById("file").value = "";
+
+        const responseData = await fetchData('uploadcsv', data);
+        console.log(responseData);
+        if(responseData.formated_success){
+            sendRequest('Estamos procesando tu solicitud')
+            showSpinner("spinner")
+            // Make a chatgpt response
+            const responseToken = await fetchData('token', data);
+            // console.log(responseToken)
+            const responseChatgpt = await fetchData('analyze-csv', data,responseToken.key);
+            hideSpinner("spinner")
+            sendRequest(responseChatgpt.initial_description)
+            responseChatgpt.chatgpt_response.map((chatResponse) => {
+                sendRequest(chatResponse);
+              });
+            // sendRequest(responseChatgpt.chatgpt_response)
+            console.log(responseChatgpt)
+            
+        }
+
       }
 
-    // Format Data
-    const responseData = await fetchData('uploadcsv', data);
-    console.log(responseData);
-    if(responseData.formated_success){
-        sendRequest('Estamos procesando tu solicitud')
-        showSpinner("spinner")
-        // Make a chatgpt response
-        const responseToken = await fetchData('token', data);
-        // console.log(responseToken)
-        const responseChatgpt = await fetchData('analyze-csv', data,responseToken.key);
-        hideSpinner("spinner")
-        sendRequest(responseChatgpt.initial_description)
-        sendRequest(responseChatgpt.chatgpt_response)
-        console.log(responseChatgpt)
-        
-    }else{
-        //añadir mensaje de error
-        addBotMessage("ocurrio un error");
-    }
   
 }
 

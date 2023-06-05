@@ -76,7 +76,7 @@ class UploadCSVAPIView(APIView):
 
 class AnalizeCSVAPIView(APIView):
     def post(self, request):
-        
+        user_text = request.data.get('user-text', '')
         # api_key= config("OPENAI_API_KEY2")
         token = self.get_token_from_header(request)
 
@@ -90,16 +90,26 @@ class AnalizeCSVAPIView(APIView):
         try:
             resultsDataFrame = analize_csv(csv_file_path.csv_file)
             results = resultsDataFrame['dataframe']
+            if not user_text:
 
 
-            res = send_messages_to_chatgpt(results, token)
-            
-            data = {
-                "initial_description" : resultsDataFrame["initial_description"],
-                "chatgpt_response": clean_data_to_array(res)
-            }
+                res = send_messages_to_chatgpt(results, token)
+                
+                data = {
+                    "initial_description" : resultsDataFrame["initial_description"],
+                    "chatgpt_response": clean_data_to_array(res)
+                }
 
-            return Response(data, status=status.HTTP_200_OK)
+                return Response(data, status=status.HTTP_200_OK)
+            else:
+                user_message = f"{results} {user_text}"
+                res = send_messages_to_chatgpt(user_message, token)
+                
+                data = {
+                    "chatgpt_response": clean_data_to_array(res)
+                }
+                return Response(data, status=status.HTTP_200_OK)
+
         except openai_error.OpenAIError as e:
             print(e)
             return Response({"error": 'An error occurred while communicating with the OpenAI API.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
