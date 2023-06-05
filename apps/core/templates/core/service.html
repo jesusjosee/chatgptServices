@@ -31,6 +31,9 @@
                 </div>
             </div>
             <form id="my-form" enctype="multipart/form-data" onsubmit="sendMessage(event)">
+                <div id="spinner" class="spinner-border" role="status" style="display: none;">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
                 <div class="card-footer d-flex flex-column">
                     <div class="input-box">
                         <div class="d-flex">
@@ -46,12 +49,14 @@
                             name="user-text" placeholder="Escribe tu mensaje..." style="display: none;">
                         <input onchange="removeDisabled()" type="file" class="form-control mt-2 ms-2" id="file"
                             name="file">
+                        
                     </div>
             
                     <button id="send" disabled class="btn btn-success mt-2" type="submit" >Enviar</button>
             
                 </div>
             </form>
+            
         </div>
     </div>
 </div>

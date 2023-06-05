@@ -9,21 +9,39 @@ async function sendMessage(event) {
     var data = new FormData(formElement);
   
     if (userInput == '' && !fileInput) return;
-  
+
+    if (userInput !== '') {
+        addUserMessage(userInput);
+        sendRequest(userInput);
+        document.getElementById("user-text").value = "";
+      }
+    
+      if (fileInput) {
+        addUserMessage("Archivo: " + fileInput.name + " enviado");
+        sendFile(fileInput);
+        document.getElementById("file").value = "";
+      }
+
+    // Format Data
     const responseData = await fetchData('uploadcsv', data);
     console.log(responseData);
-  
-    if (userInput !== '') {
-      addUserMessage(userInput);
-      sendRequest(userInput);
-      document.getElementById("user-text").value = "";
+    if(responseData.formated_success){
+        sendRequest('Estamos procesando tu solicitud')
+        showSpinner("spinner")
+        // Make a chatgpt response
+        const responseToken = await fetchData('token', data);
+        // console.log(responseToken)
+        const responseChatgpt = await fetchData('analyze-csv', data,responseToken.key);
+        hideSpinner("spinner")
+        sendRequest(responseChatgpt.initial_description)
+        sendRequest(responseChatgpt.chatgpt_response)
+        console.log(responseChatgpt)
+        
+    }else{
+        //añadir mensaje de error
+        addBotMessage("ocurrio un error");
     }
   
-    if (fileInput) {
-      addUserMessage("Archivo: " + fileInput.name + " enviado");
-      sendFile(fileInput);
-      document.getElementById("file").value = "";
-    }
 }
 
 
@@ -52,19 +70,18 @@ function addBotMessage(message) {
 }
 
 function sendRequest(message) {
-    // Aquí puedes realizar una solicitud a la API de ChatGPT o cualquier otra lógica de interpretación de datos
-    // y luego recibir la respuesta para mostrarla en la interfaz
-    // Por simplicidad, en este ejemplo, simplemente mostraremos una respuesta estática
     var response = "¡Gracias por tu mensaje! Estoy procesando la interpretación de los datos...";
+    if (message){
+        response = message
+    }
+    
     setTimeout(function() {
         addBotMessage(response);
     }, 1000);
 }
 
 function sendFile(file) {
-    // Aquí puedes implementar la lógica para enviar el archivo a la API o procesarlo de alguna manera
-    // Por simplicidad, en este ejemplo, simplemente mostraremos un mensaje indicando el nombre del archivo enviado
-    var response = "¡Archivo recibido: " + file.name + "!";
+    var response = "¡Archivo recibido:" + file.name + "!";
     setTimeout(function() {
         addBotMessage(response);
     }, 1000);

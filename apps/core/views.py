@@ -11,7 +11,7 @@ def home(request):
 
     if not isinstance(request.user, AnonymousUser):
         try:
-            apikey = ApiKey.objects.filter(user=request.user).first()
+            apikey = ApiKey.objects.filter(user=request.user).last()
         except ApiKey.DoesNotExist:
             pass
 
@@ -19,11 +19,9 @@ def home(request):
     
     return render(request, 'core/home.html', data)
 
-# def service(request):
-#     return render(request, 'core/service.html')
-
-
     
 class ServiceView(TemplateView):
     template_name = "core/service.html"
     
+
+

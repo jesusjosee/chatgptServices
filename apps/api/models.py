@@ -21,6 +21,12 @@ class ApiKey(models.Model):
         if not ApiKey.objects.filter(key=self.key, user=self.user).exists():
             super().save(*args, **kwargs)
 
+    def get_last_upload_file(self):
+        try:
+            return self.upload_files.latest('id')
+        except UploadFile.DoesNotExist:
+            return None
+
 class UploadFile(models.Model):
     csv_file = models.FileField(upload_to=csv_upload_path, max_length = 100)
     api_key = models.ForeignKey(ApiKey, on_delete=models.CASCADE, related_name='upload_files', null=True, blank=True)

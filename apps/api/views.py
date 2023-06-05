@@ -1,4 +1,6 @@
 from django.contrib.auth.models import AnonymousUser
+from django.http import JsonResponse
+
 from django.shortcuts import get_object_or_404
 from rest_framework.parsers import MultiPartParser
 from rest_framework.views import APIView
@@ -15,6 +17,8 @@ from apps.users.models import CustomUser
 from .helpers.exceptions import MalformedDataException
 from .helpers.convert_data import analize_csv, clean_data_to_array, extract_csv_data
 from .helpers.prompts import send_messages_to_chatgpt 
+from .serializers import ApiKeySerializer
+
 
 # Create your views here.
 class APiKeyAutenticationView(APIView):
@@ -40,7 +44,7 @@ class UploadCSVAPIView(APIView):
         file = request.FILES.get('file')
         user_text= request.data.get('user-text')
         if user_text:
-            #Todo pasarle el texto a chtgpt
+            #TODO pasarle el texto a chtgpt
             pass
         
         if not file:
@@ -49,10 +53,19 @@ class UploadCSVAPIView(APIView):
         if not file.name.endswith('.csv'):
             return Response({'error': 'The file must be in CSV format'}, status=status.HTTP_400_BAD_REQUEST)
         
+        #TODO: DARLE formato al csv , borrar elimniar filas sin contenido
+        #TODO: enviar una respues de csv formateado en el Response
+        
+            
         try:
+            api_key = None
+            if not isinstance(request.user, AnonymousUser):
+                user = get_object_or_404(CustomUser, email=request.user.email)
+                api_key = ApiKey.objects.get(user=user)
+
             processed_data = extract_csv_data(file)
-            UploadFile.objects.create(csv_file=file)
-            return Response({'data': processed_data}, status=status.HTTP_200_OK)
+            UploadFile.objects.create(csv_file=file, api_key=api_key)
+            return Response({'data': processed_data, 'formated_success': True}, status=status.HTTP_200_OK)
         
         except MalformedDataException:
             return Response({'error': 'The data is malformed or missing data in the rows.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -63,23 +76,33 @@ class UploadCSVAPIView(APIView):
 
 class AnalizeCSVAPIView(APIView):
     def post(self, request):
-        csv_file_path = UploadFile.objects.last()
+        
         # api_key= config("OPENAI_API_KEY2")
         token = self.get_token_from_header(request)
+
+        if not isinstance(request.user, AnonymousUser):
+            api_key = ApiKey.objects.get(key=token)
+            csv_file_path = UploadFile.objects.filter(api_key=api_key)[0]
+        else:
+            csv_file_path = UploadFile.objects.last()
+            pass
         
         try:
-            results = analize_csv(csv_file_path.csv_file)
+            resultsDataFrame = analize_csv(csv_file_path.csv_file)
+            results = resultsDataFrame['dataframe']
 
-            res = send_messages_to_chatgpt(results['dataframe'], token)
+
+            res = send_messages_to_chatgpt(results, token)
             
             data = {
-                "initial_description" : results["initial_description"],
+                "initial_description" : resultsDataFrame["initial_description"],
                 "chatgpt_response": clean_data_to_array(res)
             }
 
             return Response(data, status=status.HTTP_200_OK)
         except openai_error.OpenAIError as e:
-            return Response({"error": 'Ocurrió un error al comunicarse con la API de OpenAI:'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            print(e)
+            return Response({"error": 'An error occurred while communicating with the OpenAI API.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def get_token_from_header(self, request):
         authorization_header = request.META.get('HTTP_AUTHORIZATION')
@@ -93,3 +116,17 @@ class AnalizeCSVAPIView(APIView):
                 pass
         
         return None
+
+
+class Get_token(APIView):
+    def post(self, request):
+        if not isinstance(request.user, AnonymousUser):
+            try:
+                apikey = ApiKey.objects.filter(user=request.user).last()
+                serializer = ApiKeySerializer(apikey)
+                serialized_data = serializer.data
+                return Response(serialized_data)
+            except ApiKey.DoesNotExist:
+                pass
+        
+        return Response({})

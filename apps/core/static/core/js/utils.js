@@ -13,7 +13,7 @@ function getCookie(name) {
     return cookieValue;
 }
   
-async function fetchData(url, data) {
+async function fetchData(url, data, token=null) {
   const baseURL = 'api';
   const fullURL = `${baseURL}/${url}`;
 
@@ -29,6 +29,11 @@ async function fetchData(url, data) {
     const csrfToken = getCookie('csrftoken');
     headers['X-CSRFToken'] = csrfToken;
 
+    if(token){
+      headers['Authorization'] = `Bearer ${token}`;
+
+    }
+
     const response = await fetch(fullURL, {
       method: 'POST',
       body: data,
@@ -43,8 +48,6 @@ async function fetchData(url, data) {
   }
 }
 
-  
-  
 
 
 function showAlert(alertId, typeClass, message, linkHref = '', linkText = '') {

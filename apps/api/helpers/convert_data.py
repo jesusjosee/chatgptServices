@@ -25,7 +25,7 @@ def analize_csv(csv_file_path):
     df = pd.read_csv(csv_file_path)
 
     # Generar una descripción inicial de los datos
-    descripcion_inicial = f"El archivo CSV contiene {len(df)} filas y {len(df.columns)} columnas.\n\n"
+    descripcion_inicial = f"El archivo CSV contiene {len(df)} filas y {len(df.columns)} columnas."
 
     return {
         "initial_description": descripcion_inicial,
