@@ -15,11 +15,13 @@ async function sendMessage(event) {
         // sendRequest(userInput);
         document.getElementById("user-text").value = "";
 
+        showSpinner("spinner")
         const responseToken = await fetchData('token', data);
         data = {
             'user-text': userInput
         }
         const textResponse = await fetchData('analyze-csv', data,responseToken.key);
+        hideSpinner("spinner")
         addBotMessage(textResponse.chatgpt_response);
         console.log("textResponse:", textResponse)
 
