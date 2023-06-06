@@ -42,10 +42,6 @@ class UploadCSVAPIView(APIView):
 
     def post(self, request, *args, **kwargs):
         file = request.FILES.get('file')
-        user_text= request.data.get('user-text')
-        if user_text:
-            #TODO pasarle el texto a chtgpt
-            pass
         
         if not file:
             return Response({'error': 'No file provided'}, status=status.HTTP_400_BAD_REQUEST)
@@ -53,10 +49,6 @@ class UploadCSVAPIView(APIView):
         if not file.name.endswith('.csv'):
             return Response({'error': 'The file must be in CSV format'}, status=status.HTTP_400_BAD_REQUEST)
         
-        #TODO: DARLE formato al csv , borrar elimniar filas sin contenido
-        #TODO: enviar una respues de csv formateado en el Response
-        
-            
         try:
             api_key = None
             if not isinstance(request.user, AnonymousUser):
