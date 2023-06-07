@@ -33,12 +33,17 @@ class APiKeyAutenticationView(APIView):
         
         if not isinstance(request.user, AnonymousUser):
             user = get_object_or_404(CustomUser, email=request.user.email)
+            api_key_exists = ApiKey.objects.filter(key=api_key).exists()
+            if api_key_exists:
+                return Response({'response': 'api_key_used'}, status=status.HTTP_401_UNAUTHORIZED)
+            
             ApiKey.objects.create(key=api_key, user=user)
         
         return Response({'response': response['api_key']}, status=status.HTTP_200_OK)
       
 class UploadCSVAPIView(APIView):
     parser_classes = [MultiPartParser]
+    max_file_size = 2 * 1024 * 1024  # 5 MB
 
     def post(self, request, *args, **kwargs):
         file = request.FILES.get('file')
@@ -48,6 +53,10 @@ class UploadCSVAPIView(APIView):
 
         if not file.name.endswith('.csv'):
             return Response({'error': 'The file must be in CSV format'}, status=status.HTTP_400_BAD_REQUEST)
+    
+        if file.size > self.max_file_size:
+            return Response({'error': 'The file size exceeds the maximum limit of 5MB'}, status=status.HTTP_400_BAD_REQUEST)
+        
         
         try:
             api_key = None
