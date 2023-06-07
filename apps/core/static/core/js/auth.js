@@ -16,7 +16,12 @@
                   linkHref = '/service', linkText = 'Ir al chat para interactuar con la app');
         apiKeyInput.value = '';
         disableButton('submitButton');
-      }else{
+      }else if (responseData.response === 'api_key_used'){
+        showAlert('alert','danger', 'Esta api key ya ha sido utilizada por otro usuario');
+        apiKeyInput.value = '';
+        enableButton('submitButton');
+      }
+      else{
         showAlert('alert','danger', 'La API key  ingresada no es valida');
         apiKeyInput.value = '';
         enableButton('submitButton');
