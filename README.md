@@ -5,7 +5,7 @@ First you shoud register and  sign in , next enter your api key provided by open
 
 Open a postman service or another.
 
-## 1. API toAuthenticate
+## 1. API to Authenticate
 - http://localhost:8000/api/authentication
     ##### METHOD : POST
     ##### BODY: 
@@ -68,4 +68,12 @@ Open a postman service or another.
         }
 
 ## 4 .Platform
-image.png
+###### After register and sign in Enter a valid openAi api key
+![refresh](https://github.com/jesusjosee/chatgptServices/assets/58668859/8d3940e9-1ec7-497e-aeec-6fefc1136e1d)
+
+###### Insert a file and next if you want you can answer about the file information
+![image](https://github.com/jesusjosee/chatgptServices/assets/58668859/28c70402-9c7c-48fd-9a75-ac62b0161c29)
+
+###### An example response
+![image](https://github.com/jesusjosee/chatgptServices/assets/58668859/20933fa1-077d-4552-a39e-2e7d6a7ba1a8)
+
