@@ -2,7 +2,7 @@ This Service is made to interact with **openAI** api like **chatgpt** and make a
 You can prove this service this this api or you can interact with this service in http://localhost:8000. 
 First you shoud register and  sign in , next enter your api key provided by openai, and next interact with the service
 
-
+---
 Open a postman service or another.
 
 ## 1. API to Authenticate
