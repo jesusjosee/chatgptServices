@@ -78,34 +78,34 @@ class UploadCSVAPIView(APIView):
 class AnalizeCSVAPIView(APIView):
     def post(self, request):
         user_text = request.data.get('user-text', '')
-        # api_key= config("OPENAI_API_KEY2")
         token = self.get_token_from_header(request)
 
         if not isinstance(request.user, AnonymousUser):
-            api_key = ApiKey.objects.get(key=token)
-            csv_file_path = UploadFile.objects.filter(api_key=api_key)[0]
+            try:
+                api_key = ApiKey.objects.get(key=token)
+                csv_file_path = UploadFile.objects.filter(api_key=api_key).first()  # Obtiene el primer objeto del queryset
+            except ApiKey.DoesNotExist:
+                return Response({"error": 'Api Key no encontrada.'}, status=status.HTTP_404_NOT_FOUND)
         else:
             csv_file_path = UploadFile.objects.last()
-            pass
-        
+
+        if not csv_file_path:
+            return Response({"error": 'No se encontró ningún archivo CSV asociado.'}, status=status.HTTP_404_NOT_FOUND)
+
         try:
             resultsDataFrame = analize_csv(csv_file_path.csv_file)
             results = resultsDataFrame['dataframe']
+
             if not user_text:
-
-
                 res = send_messages_to_chatgpt(results, token)
-                
                 data = {
                     "initial_description" : resultsDataFrame["initial_description"],
                     "chatgpt_response": clean_data_to_array(res)
                 }
-
                 return Response(data, status=status.HTTP_200_OK)
             else:
                 user_message = f"{results} {user_text}"
                 res = send_messages_to_chatgpt(user_message, token)
-                
                 data = {
                     "chatgpt_response": clean_data_to_array(res)
                 }
@@ -113,7 +113,7 @@ class AnalizeCSVAPIView(APIView):
 
         except openai_error.OpenAIError as e:
             print(e)
-            return Response({"error": 'An error occurred while communicating with the OpenAI API.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": 'Ocurrió un error al comunicarse con la API de OpenAI.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def get_token_from_header(self, request):
         authorization_header = request.META.get('HTTP_AUTHORIZATION')
@@ -127,6 +127,7 @@ class AnalizeCSVAPIView(APIView):
                 pass
         
         return None
+
 
 
 class Get_token(APIView):
